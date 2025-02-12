@@ -1,0 +1,100 @@
+<div class="container">
+  <div class="information">
+    <h1>AI能力驱动的userData</h1>
+    <table class="table table-striped" id="user_table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>姓名</th>
+          <th>家乡</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- <tr>
+            <td>1</td>
+            <td>代童</td>
+            <td>赣州</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>罗昭发</td>
+            <td>赣州</td>
+          </tr> -->
+      </tbody>
+    </table>
+
+    <div class="send">
+      <form name="aiForm">
+        <div class="form-group">
+          <label for="questionInput">向AI助理提问</label>
+          <input
+            type="text"
+            name="question"
+            class="form-control"
+            id="questionInput"
+            placeholder="请输入你想问的users相关问题"
+          />
+        </div>
+        <button type="submit" class="btn btn-default">提交</button>
+      </form>
+    </div>
+
+    <div class="answer" id="message"></div>
+  </div>
+</div>
+<script>
+  // 选择表格中 tbody 元素，用于后续操作
+  const oBody = document.querySelector("#user_table tbody");
+
+  // 初始化一个空数组，用于存储从服务器获取的用户数据
+  let usersData = [];
+
+  // 使用 fetch API 从后端获取用户数据
+  fetch("http://localhost:3000/users")
+    // 解析响应的数据为 JSON 格式
+    .then((data) => data.json())
+    // 处理解析后的用户数据
+    .then((users) => {
+      usersData = users;
+      // 将用户数据生成 HTML 表格行，并插入到 tbody 中
+      oBody.innerHTML = users
+        .map(
+          (user) => `
+            <tr>
+                <td>${user.id}</td>
+                <td>${user.name}</td>
+                <td>${user.hometown}</td>
+            </tr>
+            `
+        )
+        .join("");
+    });
+
+  const oMessage = document.querySelector("#message");
+  const oForm = document.forms["aiForm"];
+
+  // 监听表单提交事件
+  oForm.addEventListener("submit", function (event) {
+    // 阻止表单默认提交行为
+    event.preventDefault();
+
+    // 获取表单中 name 属性为 "question" 的输入框的值，并去除首尾空格
+    const question = this["question"].value.trim();
+
+    // 如果问题不为空
+    if (question) {
+      // 发起 HTTP 请求，向AI服务发送问题和用户数据
+      fetch(
+        `http://localhost:8899/users?question=${question}&users=${JSON.stringify(
+          usersData
+        )}`
+      )
+        .then((data) => data.json()) // 将响应数据解析为 JSON 格式
+        .then((res) => {
+          console.log(res); // 打印响应数据到控制台
+          // 将响应中的消息显示在页面中 id 为 "message" 的元素中
+          document.querySelector("#message").innerHTML = res.message;
+        });
+    }
+  });
+</script>

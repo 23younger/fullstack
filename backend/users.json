@@ -1,0 +1,25 @@
+{
+    "users": [
+      {
+        "id": 1,
+        "name": "蒲熠星",
+        "hometown": "绵阳"
+      },
+      {
+        "id": 2,
+        "name": "郭文韬",
+        "hometown": "青海"
+      },
+      {
+        "id": 3,
+        "name": "积米者",
+        "hometown": "潮汕"
+      },
+      {
+        "id": 4,
+        "name": "小旺车",
+        "hometown": "丰城"
+      }
+    ]
+  }
+  
